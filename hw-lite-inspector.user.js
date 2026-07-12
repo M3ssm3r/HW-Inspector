@@ -11,6 +11,8 @@
 // @match        *://*.nextersglobal.com/*
 // @grant        none
 // @license      GPL-3.0-or-later
+// @updateURL    https://raw.githubusercontent.com/M3ssm3r/HW-Inspector/main/hw-lite-inspector.user.js
+// @downloadURL  https://raw.githubusercontent.com/M3ssm3r/HW-Inspector/main/hw-lite-inspector.user.js
 // ==/UserScript==
 
 (function() {
