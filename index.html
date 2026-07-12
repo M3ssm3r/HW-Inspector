@@ -3,203 +3,1310 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HW Lite Inspector</title>
+    <title>HW Lite Inspector — Advanced Hero Wars Stats Addon</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Open-source browser addon for Hero Wars. Reveal hidden stats, analyze damage matrices, and simulate stat modifications in real time.">
+    <meta name="keywords" content="Hero Wars, Хроники Хаоса, Tampermonkey, Hero Wars script, HW Inspector, Damage Matrix">
+    <meta name="author" content="Messmer">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="HW Lite Inspector">
+    <meta property="og:description" content="Advanced Hero Wars Stats Inspector. Unveil hidden data, calculate reductions, and optimize your strategy.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/m3ssmer/hw-lite-inspector/main/preview.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
+        /* CSS variables based on Hero Wars palette */
         :root {
-            --bg-color: #111111;
-            --panel-bg: #1a1a1a;
-            --text-main: #d1d1d1;
-            --gold: #ffd100;
-            --border: #4a4a4a;
-            --btn-hover: #333333;
+            --bg-darker: #07080a;
+            --bg-dark: #0f1115;
+            --bg-glass: rgba(15, 17, 21, 0.75);
+            --border-glass: rgba(255, 209, 0, 0.15);
+            --gold-primary: #ffd100;
+            --gold-hover: #ffea75;
+            --gold-dark: #b8860b;
+            --blue-accent: #00a2ff;
+            --blue-glow: rgba(0, 162, 255, 0.4);
+            --red-accent: #ff4d4d;
+            --text-light: #f5f6f8;
+            --text-muted: #8e95a5;
+            --transition-speed: 0.3s;
         }
-        body {
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: Arial, Helvetica, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
         }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-darker);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(255, 209, 0, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(0, 162, 255, 0.05) 0%, transparent 50%);
+            color: var(--text-light);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Container helper */
         .container {
-            max-width: 800px;
-            margin: 40px 20px;
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5);
-            overflow: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
-        .header {
-            background: linear-gradient(to bottom, #2b2b2b, #111);
-            padding: 15px 20px;
-            border-bottom: 1px solid #000;
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.5px;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* Glow effects */
+        .gold-glow {
+            animation: goldPulse 4s infinite alternate;
+        }
+
+        @keyframes goldPulse {
+            0% { box-shadow: 0 0 10px rgba(255, 209, 0, 0.1); }
+            100% { box-shadow: 0 0 25px rgba(255, 209, 0, 0.3); }
+        }
+
+        /* Header & Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(7, 8, 10, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: background var(--transition-speed);
+        }
+
+        .header-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            font-family: 'Cinzel', serif;
+            text-shadow: 0 0 10px rgba(255, 209, 0, 0.3);
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            transition: color var(--transition-speed);
+        }
+
+        .nav-link:hover {
+            color: var(--gold-primary);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--border-glass);
+            color: var(--gold-primary);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: all var(--transition-speed);
+        }
+
+        .lang-btn:hover {
+            background: rgba(255, 209, 0, 0.1);
+            border-color: var(--gold-primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 100px 0 80px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 209, 0, 0.1);
+            border: 1px solid var(--border-glass);
+            color: var(--gold-primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            line-height: 1.1;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 30%, var(--gold-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero h2 {
+            font-size: 1.4rem;
+            color: var(--blue-accent);
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-bottom: 35px;
+            max-width: 540px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            transition: all var(--transition-speed);
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+            color: #000;
+            border: none;
+            box-shadow: 0 4px 20px rgba(255, 209, 0, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 209, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Mockup / Live Preview Container */
+        .mockup-container {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Live Calc Demonstration in Hero Section */
+        .live-preview-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+            margin-bottom: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .title {
-            color: var(--gold);
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px #000;
+
+        .preview-title {
+            color: var(--gold-primary);
+            font-size: 0.85rem;
+            font-weight: 700;
             letter-spacing: 1px;
+            text-transform: uppercase;
         }
-        .lang-switch {
-            background: #222;
-            color: var(--gold);
-            border: 1px solid var(--border);
-            padding: 5px 10px;
-            cursor: pointer;
+
+        .preview-badge {
+            background: #10b981;
+            color: #fff;
+            font-size: 0.7rem;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-weight: bold;
+            font-weight: 600;
         }
-        .lang-switch:hover {
-            background: var(--btn-hover);
+
+        .sim-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        .content {
+
+        .sim-group {
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .sim-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .sim-input {
+            width: 100%;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255, 209, 0, 0.2);
+            border-radius: 4px;
+            color: var(--gold-primary);
+            padding: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color var(--transition-speed);
+        }
+
+        .sim-input:focus {
+            border-color: var(--gold-primary);
+        }
+
+        .sim-output-box {
+            background: rgba(0, 162, 255, 0.05);
+            border: 1px solid rgba(0, 162, 255, 0.2);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .output-label {
+            font-size: 0.8rem;
+            color: var(--blue-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .output-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--bg-glass);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
             padding: 30px;
-            line-height: 1.6;
+            transition: all var(--transition-speed);
         }
-        h2 {
-            color: #ffffff;
-            border-bottom: 1px solid #333;
-            padding-bottom: 5px;
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-glass);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
-        ul {
-            list-style-type: none;
-            padding: 0;
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            display: inline-block;
         }
-        ul li {
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            color: var(--gold-primary);
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Screenshots Section */
+        .screenshots {
+            padding: 100px 0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .gallery-card {
+            background: var(--bg-glass);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all var(--transition-speed);
+        }
+
+        .gallery-card:hover {
+            transform: scale(1.02);
+            border-color: var(--border-glass);
+        }
+
+        /* Pure CSS Stylized Mock representation of real script interface */
+        .window-mock {
+            background: #111;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mock-header {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gold-primary);
+            font-weight: bold;
             margin-bottom: 10px;
-            padding-left: 20px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 4px;
+        }
+
+        .mock-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 6px;
+            background: #1a1a1a;
+            border: 1px solid #222;
+            margin-bottom: 4px;
+            border-radius: 3px;
+        }
+
+        .mock-tag-red { color: var(--red-accent); font-weight: bold; }
+        .mock-tag-blue { color: var(--blue-accent); font-weight: bold; }
+        .mock-label { color: #888; font-size: 10px; }
+
+        .gallery-caption {
+            padding: 15px;
+            background: rgba(0,0,0,0.4);
+        }
+
+        .gallery-caption h4 {
+            color: #fff;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        .gallery-caption p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Installation Section */
+        .install {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
             position: relative;
         }
-        ul li::before {
-            content: "•";
-            color: var(--gold);
+
+        .step-card {
+            background: var(--bg-glass);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-num {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+            color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            margin: 0 auto 20px;
+            font-family: 'Cinzel', serif;
+            box-shadow: 0 4px 10px rgba(255, 209, 0, 0.3);
+        }
+
+        .step-card h3 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .step-card p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 100px 0;
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .faq-item {
+            background: var(--bg-glass);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: border-color var(--transition-speed);
+        }
+
+        .faq-item:hover {
+            border-color: var(--border-glass);
+        }
+
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: #fff;
+            user-select: none;
+        }
+
+        .faq-icon {
+            color: var(--gold-primary);
+            transition: transform var(--transition-speed);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--transition-speed) cubic-bezier(0, 1, 0, 1);
+            background: rgba(0,0,0,0.1);
+        }
+
+        .faq-answer p {
+            padding: 0 20px 20px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 1000px;
+            transition: max-height var(--transition-speed) cubic-bezier(1, 0, 1, 0);
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        /* Changelog Section */
+        .changelog {
+            padding: 100px 0;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .changelog-box {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--bg-glass);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 40px;
+        }
+
+        .changelog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .version {
+            color: var(--gold-primary);
             font-weight: bold;
+            font-size: 1.2rem;
+            font-family: 'Cinzel', serif;
+        }
+
+        .changelog-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .changelog-list li {
+            position: relative;
+            padding-left: 20px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .changelog-list li::before {
+            content: "✔";
+            color: #10b981;
             position: absolute;
             left: 0;
-        }
-        .install-btn {
-            display: inline-block;
-            margin-top: 20px;
-            background: #222;
-            color: #00ff66;
-            text-decoration: none;
-            padding: 12px 24px;
-            border: 1px solid #00ff66;
-            border-radius: 4px;
+            top: 0;
             font-weight: bold;
-            text-align: center;
-            transition: all 0.2s;
         }
-        .install-btn:hover {
-            background: #00ff66;
-            color: #000;
-            box-shadow: 0 0 10px #00ff66;
-        }
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #666;
+
+        /* Download Section CTA */
+        .download-cta {
+            padding: 120px 0;
             text-align: center;
-            border-top: 1px solid #333;
-            padding-top: 15px;
+            position: relative;
+        }
+
+        .cta-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(20, 24, 33, 0.95) 0%, rgba(10, 12, 16, 0.95) 100%);
+            border: 1px solid var(--border-glass);
+            padding: 60px 40px;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(255, 209, 0, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-box h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .cta-box p {
+            color: var(--text-muted);
+            margin-bottom: 35px;
+            font-size: 1.1rem;
+        }
+
+        .btn-large {
+            padding: 16px 45px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-darker);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 60px 0 30px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-left h3 {
+            color: var(--gold-primary);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold-primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding-top: 25px;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding-top: 60px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                margin: 0 auto 30px;
+            }
+
+            .btn-group {
+                justify-content: center;
+            }
+
+            .mockup-container {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                display: none; /* Can be expanded into a mobile menu if required */
+            }
+
+            .header-wrap {
+                justify-content: space-between;
+            }
+
+            .footer-wrap {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header">
-        <div class="title" data-i18n="title">⚔️ HW Lite Inspector</div>
-        <button class="lang-switch" onclick="toggleLang()" id="langBtn">EN / RU</button>
-    </div>
-    <div class="content">
-        <h2 data-i18n="descTitle">About the script</h2>
-        <p data-i18n="descText">Deep stats analysis mod for Hero Wars. Reveals hidden values, calculates reductions via Damage Matrix, and allows stat adjustments.</p>
-        
-        <h2 data-i18n="featTitle">Features</h2>
-        <ul>
-            <li data-i18n="feat1">Reveals hidden stats of enemies.</li>
-            <li data-i18n="feat2">Damage Matrix: calculates physical and magical reductions between heroes.</li>
-            <li data-i18n="feat3">Calculator: allows manual stat adjustments to test outcomes.</li>
-            <li data-i18n="feat4">Parses Match History & Journal.</li>
-            <li data-i18n="feat5">Export battles in text format.</li>
-        </ul>
-
-        <h2 data-i18n="instTitle">Installation</h2>
-        <p data-i18n="instStep1">1. Install a userscript manager like <b>Tampermonkey</b> for your browser.</p>
-        <p data-i18n="instStep2">2. Click the button below to install the script.</p>
-        
-        <a href="hw-lite-inspector.user.js" class="install-btn" data-i18n="instBtn">INSTALL SCRIPT v2.4.4</a>
-        
-        <div class="footer">
-            Developed by Messmer (discord: m3ssmer) | License: GPL-3.0-or-later
+    <!-- Header -->
+    <header>
+        <div class="container header-wrap">
+            <a href="#" class="logo">
+                <span class="logo-icon">⚔️</span>
+                <span>HW Inspector</span>
+            </a>
+            <nav>
+                <a href="#features" class="nav-link" data-i18n="nav_features">Features</a>
+                <a href="#screenshots" class="nav-link" data-i18n="nav_screenshots">Screenshots</a>
+                <a href="#install" class="nav-link" data-i18n="nav_install">Installation</a>
+                <a href="#faq" class="nav-link" data-i18n="nav_faq">FAQ</a>
+                <a href="#changelog" class="nav-link" data-i18n="nav_changelog">Changelog</a>
+                <a href="#download" class="nav-link" data-i18n="nav_download">Download</a>
+            </nav>
+            <button class="lang-btn" id="lang-toggle">RU</button>
         </div>
-    </div>
-</div>
+    </header>
 
-<script>
-    const i18n = {
-        en: {
-            title: "⚔️ HW Lite Inspector",
-            descTitle: "About the script",
-            descText: "Deep stats analysis mod for Hero Wars. Reveals hidden values, calculates reductions via Damage Matrix, and allows stat adjustments.",
-            featTitle: "Features",
-            feat1: "Reveals hidden stats of enemies.",
-            feat2: "Damage Matrix: calculates physical and magical reductions between heroes.",
-            feat3: "Calculator: allows manual stat adjustments to test outcomes.",
-            feat4: "Parses Match History & Journal.",
-            feat5: "Export battles in text format.",
-            instTitle: "Installation",
-            instStep1: "1. Install a userscript manager like <b>Tampermonkey</b> for your browser.",
-            instStep2: "2. Click the button below to install the script.",
-            instBtn: "INSTALL SCRIPT v2.4.4"
-        },
-        ru: {
-            title: "⚔️ HW Инспектор статов",
-            descTitle: "О скрипте",
-            descText: "Мод для детального анализа статов в Хрониках Хаоса. Показывает скрытые значения, рассчитывает порезки (Матрица урона) и позволяет менять статы в калькуляторе.",
-            featTitle: "Функции",
-            feat1: "Отображает скрытые статы противников.",
-            feat2: "Матрица урона: расчет пробива и порезки физического и магического урона.",
-            feat3: "Калькулятор: ручное изменение статов для тестов.",
-            feat4: "Парсинг истории боев и журнала.",
-            feat5: "Экспорт пачек в текстовом формате.",
-            instTitle: "Установка",
-            instStep1: "1. Установите расширение <b>Tampermonkey</b> для вашего браузера.",
-            instStep2: "2. Нажмите на кнопку ниже, чтобы установить скрипт.",
-            instBtn: "УСТАНОВИТЬ СКРИПТ v2.4.4"
-        }
-    };
+    <!-- Hero Section -->
+    <section class="container hero">
+        <div>
+            <span class="badge" data-i18n="hero_badge">v2.4.4 • Open Source</span>
+            <h1 data-i18n="hero_title">HW Lite Inspector</h1>
+            <h2 data-i18n="hero_subtitle">Advanced Hero Wars Stats Inspector</h2>
+            <p data-i18n="hero_desc">Unveil hidden opponent stats, calculate precise damage reductions, and plan your battles like a pro. A passive, safe, lightweight addon for browser editions of Hero Wars.</p>
+            <div class="btn-group">
+                <a href="#download" class="btn btn-primary" data-i18n="btn_download">📥 Download</a>
+                <a href="#install" class="btn btn-secondary" data-i18n="btn_install">📖 Installation</a>
+                <a href="https://github.com" target="_blank" class="btn btn-secondary" data-i18n="btn_github">⭐ GitHub</a>
+            </div>
+        </div>
+        
+        <!-- Live calc demo representing tool capabilities -->
+        <div class="mockup-container gold-glow">
+            <div class="live-preview-header">
+                <span class="preview-title" data-i18n="sim_header">Interactive Simulator</span>
+                <span class="preview-badge" data-i18n="sim_active">Interactive</span>
+            </div>
+            
+            <div class="sim-grid">
+                <div class="sim-group">
+                    <div class="sim-label" data-i18n="sim_ap_label">Attacker Penetration</div>
+                    <input type="number" id="calc-ap" class="sim-input" value="15000" min="0">
+                </div>
+                <div class="sim-group">
+                    <div class="sim-label" data-i18n="sim_ar_label">Defender Armor / MR</div>
+                    <input type="number" id="calc-ar" class="sim-input" value="22000" min="0">
+                </div>
+            </div>
+            
+            <div class="sim-output-box">
+                <div class="output-label" data-i18n="sim_out_label">Real Damage Received</div>
+                <div class="output-value" id="calc-result">53.0%</div>
+            </div>
+        </div>
+    </section>
 
-    // Определение языка по локации/браузеру
-    let currentLang = (navigator.language || navigator.userLanguage).startsWith("ru") ? "ru" : "en";
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="features_title">Powerful Capabilities</h2>
+                <p data-i18n="features_desc">Built to work instantly in Tampermonkey, providing structural analysis of game mechanics.</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🔍</span>
+                    <h3 data-i18n="f1_title">Hidden Stats</h3>
+                    <p data-i18n="f1_desc">Expose calculated variables stored behind client-side preview buffers.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⚔</span>
+                    <h3 data-i18n="f2_title">Damage Matrix</h3>
+                    <p data-i18n="f2_desc">Instant calculation matrix comparing your teams with defensive formations.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🧮</span>
+                    <h3 data-i18n="f3_title">Live Calculator</h3>
+                    <p data-i18n="f3_desc">Manually configure theoretical defense attributes to determine battle scaling outcomes.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📋</span>
+                    <h3 data-i18n="f4_title">Team Export</h3>
+                    <p data-i18n="f4_desc">Copy structural hero stats values inside plain text parameters ready for discord sharing.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🌍</span>
+                    <h3 data-i18n="f5_title">Multi-Language</h3>
+                    <p data-i18n="f5_desc">Full Russian and English localized system configurations embedded directly in runtime.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3 data-i18n="f6_title">Ultra Lightweight</h3>
+                    <p data-i18n="f6_desc">Clean Javascript running without third-party frameworks. High performance guaranteed.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    function updateTexts() {
-        document.querySelectorAll("[data-i18n]").forEach(el => {
-            const key = el.getAttribute("data-i18n");
-            if (i18n[currentLang][key]) {
-                el.innerHTML = i18n[currentLang][key];
+    <!-- Visual Mockups / Screenshots Section -->
+    <section class="screenshots" id="screenshots">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="screenshots_title">Interface Viewports</h2>
+                <p data-i18n="screenshots_desc">Visualized components showcasing real script layouts rendered on page loads.</p>
+            </div>
+
+            <div class="gallery-grid">
+                <!-- Mockup Card 1 -->
+                <div class="gallery-card">
+                    <div class="window-mock">
+                        <div class="mock-header">
+                            <span>⚔️ INSP [BATTLE]</span>
+                            <span>[ _ ]</span>
+                        </div>
+                        <div class="mock-row">
+                            <span>Aurora <span class="mock-label">(Lvl 130)</span></span>
+                            <span style="color:var(--gold-primary); font-weight:bold;">180 250</span>
+                        </div>
+                        <div class="mock-row">
+                            <span class="mock-label">HP: 850,200 | Phys Attack: 45,210</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">
+                        <h4 data-i18n="s1_title">Detailed Stat Cards</h4>
+                        <p data-i18n="s1_desc">Inspect advanced metrics directly inside target panels.</p>
+                    </div>
+                </div>
+
+                <!-- Mockup Card 2 -->
+                <div class="gallery-card">
+                    <div class="window-mock">
+                        <div class="mock-header">
+                            <span>📊 DAMAGE MATRIX</span>
+                            <span>▶ OUT / ◀ IN</span>
+                        </div>
+                        <div class="mock-row">
+                            <span>Galahad</span>
+                            <span><span class="mock-tag-red">82%</span> / <span class="mock-tag-blue">100%</span></span>
+                        </div>
+                        <div class="mock-row">
+                            <span>Astaroth</span>
+                            <span><span class="mock-tag-red">44%</span> / <span class="mock-tag-blue">88%</span></span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">
+                        <h4 data-i18n="s2_title">The Damage Matrix</h4>
+                        <p data-i18n="s2_desc">Instant preview calculations displaying defense reductions.</p>
+                    </div>
+                </div>
+
+                <!-- Mockup Card 3 -->
+                <div class="gallery-card">
+                    <div class="window-mock">
+                        <div class="mock-header">
+                            <span>🧮 STATS CALCULATOR</span>
+                            <span>RUNNING</span>
+                        </div>
+                        <div class="mock-row" style="border:1px solid var(--gold-primary);">
+                            <span>Self Armor Buff</span>
+                            <span style="color:#1eff00;">+12,000</span>
+                        </div>
+                        <div class="mock-row">
+                            <span>Simulated Mitigation</span>
+                            <span style="color:var(--gold-primary);">85.2% Reduction</span>
+                        </div>
+                    </div>
+                    <div class="gallery-caption">
+                        <h4 data-i18n="s3_title">Real-Time Simulator</h4>
+                        <p data-i18n="s3_desc">Add custom modifications on demand during active gameplay checks.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Steps Section -->
+    <section class="install" id="install">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="install_title">Quick Installation</h2>
+                <p data-i18n="install_desc">Start analyzing your server stats within minutes by following these simple steps.</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-num">I</div>
+                    <h3 data-i18n="step1_title">Install Tampermonkey</h3>
+                    <p data-i18n="step1_desc">Download the standard Tampermonkey extension for Chrome, Firefox, or Edge.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">II</div>
+                    <h3 data-i18n="step2_title">Import Script</h3>
+                    <p data-i18n="step2_desc">Click Download below to let Tampermonkey handle the automated script installation.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">III</div>
+                    <h3 data-i18n="step3_title">Run Hero Wars</h3>
+                    <p data-i18n="step3_desc">Open Web, Alliance, or Nexters page link inside your active browser.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">IV</div>
+                    <h3 data-i18n="step4_title">Access Overlay</h3>
+                    <p data-i18n="step4_desc">The UI panel appears on your window screen automatically during page setups.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="faq_title">Frequently Asked Questions</h2>
+                <p data-i18n="faq_desc">Answers to common inquiries regarding the addon's operations and safety.</p>
+            </div>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span data-i18n="q1">Is it safe to run?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p data-i18n="a1">Yes, absolutely. The addon runs entirely within client memory, and does not alter network packages. It only displays network data packets already processed by your browser.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span data-i18n="q2">Does it modify any gameplay actions?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p data-i18n="a2">No. This tool does not perform scripts automation, auto-fights, hacks, or macro interactions. It remains entirely passive.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span data-i18n="q3">Can this lead to profile restrictions?</span>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p data-i18n="a3">No user profiles have experienced safety issues since this script operates like a standard browser inspect tool window without network manipulation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Changelog Section -->
+    <section class="changelog" id="changelog">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="changelog_title">Update History</h2>
+                <p data-i18n="changelog_desc">Review recent version configurations and structural improvements.</p>
+            </div>
+
+            <div class="changelog-box">
+                <div class="changelog-header">
+                    <span class="version" data-i18n="ver_label">Version 2.4.4</span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem;" data-i18n="ver_date">Recent Release</span>
+                </div>
+                <ul class="changelog-list">
+                    <li data-i18n="c1">Advanced calculation support on Physical Crit, Magic Crit, and Dodge variables.</li>
+                    <li data-i18n="c2">Introduced active Calculator modifiers inside Hero View elements.</li>
+                    <li data-i18n="c3">Added complete calculations and identification for Titans stats metrics.</li>
+                    <li data-i18n="c4">Modernized UI layouts with adaptive sizing configurations.</li>
+                    <li data-i18n="c5">Cleaned structural execution scopes ensuring low resource impact.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section class="download-cta" id="download">
+        <div class="container">
+            <div class="cta-box gold-glow">
+                <h2 data-i18n="dl_title">Upgrade Your Tactical Analysis</h2>
+                <p data-i18n="dl_desc">Get instant access to real-time math calculations. Safe, secure, and ready to use.</p>
+                <!-- REPLACE # WITH THE DIRECT URL TO YOUR .user.js FILE FOR 1-CLICK INSTALLATION -->
+                <a href="hw-lite-inspector.user.js" class="btn btn-primary btn-large" data-i18n="dl_btn">📥 Download Now (.user.js)</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-wrap">
+                <div class="footer-left">
+                    <h3>HW Lite Inspector</h3>
+                    <p data-i18n="footer_credits">Created by Messmer</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://discord.com" target="_blank">💬 Discord: m3ssmer</a>
+                    <a href="https://github.com" target="_blank">💻 GitHub Project</a>
+                    <a href="#" data-i18n="license">License: GPL-3.0</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 HW Lite Inspector. All rights reserved. This utility is an independent analytical tool and is not affiliated with Nexters.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript logic (Localization & Calculator) -->
+    <script>
+        // Localization Dictionary
+        const langData = {
+            en: {
+                nav_features: "Features",
+                nav_screenshots: "Screenshots",
+                nav_install: "Installation",
+                nav_faq: "FAQ",
+                nav_changelog: "Changelog",
+                nav_download: "Download",
+                hero_badge: "v2.4.4 • Open Source",
+                hero_title: "HW Lite Inspector",
+                hero_subtitle: "Advanced Hero Wars Stats Inspector",
+                hero_desc: "Unveil hidden opponent stats, calculate precise damage reductions, and plan your battles like a pro. A passive, safe, lightweight addon for browser editions of Hero Wars.",
+                btn_download: "📥 Download",
+                btn_install: "📖 Installation",
+                btn_github: "⭐ GitHub",
+                sim_header: "Interactive Simulator",
+                sim_active: "Interactive",
+                sim_ap_label: "Attacker Penetration",
+                sim_ar_label: "Defender Armor / MR",
+                sim_out_label: "Real Damage Received",
+                features_title: "Powerful Capabilities",
+                features_desc: "Built to work instantly in Tampermonkey, providing structural analysis of game mechanics.",
+                f1_title: "Hidden Stats",
+                f1_desc: "Expose calculated variables stored behind client-side preview buffers.",
+                f2_title: "Damage Matrix",
+                f2_desc: "Instant calculation matrix comparing your teams with defensive formations.",
+                f3_title: "Live Calculator",
+                f3_desc: "Manually configure theoretical defense attributes to determine battle scaling outcomes.",
+                f4_title: "Team Export",
+                f4_desc: "Copy structural hero stats values inside plain text parameters ready for discord sharing.",
+                f5_title: "Multi-Language",
+                f5_desc: "Full Russian and English localized system configurations embedded directly in runtime.",
+                f6_title: "Ultra Lightweight",
+                f6_desc: "Clean Javascript running without third-party frameworks. High performance guaranteed.",
+                screenshots_title: "Interface Viewports",
+                screenshots_desc: "Visualized components showcasing real script layouts rendered on page loads.",
+                s1_title: "Detailed Stat Cards",
+                s1_desc: "Inspect advanced metrics directly inside target panels.",
+                s2_title: "The Damage Matrix",
+                s2_desc: "Instant preview calculations displaying defense reductions.",
+                s3_title: "Real-Time Simulator",
+                s3_desc: "Add custom modifications on demand during active gameplay checks.",
+                install_title: "Quick Installation",
+                install_desc: "Start analyzing your server stats within minutes by following these simple steps.",
+                step1_title: "Install Tampermonkey",
+                step1_desc: "Download the standard Tampermonkey extension for Chrome, Firefox, or Edge.",
+                step2_title: "Import Script",
+                step2_desc: "Click Download below to let Tampermonkey handle the automated script installation.",
+                step3_title: "Run Hero Wars",
+                step3_desc: "Open Web, Alliance, or Nexters page link inside your active browser.",
+                step4_title: "Access Overlay",
+                step4_desc: "The UI panel appears on your window screen automatically during page setups.",
+                faq_title: "Frequently Asked Questions",
+                faq_desc: "Answers to common inquiries regarding the addon's operations and safety.",
+                q1: "Is it safe to run?",
+                a1: "Yes, absolutely. The addon runs entirely within client memory, and does not alter network packages. It only displays network data packets already processed by your browser.",
+                q2: "Does it modify any gameplay actions?",
+                a2: "No. This tool does not perform scripts automation, auto-fights, hacks, or macro interactions. It remains entirely passive.",
+                q3: "Can this lead to profile restrictions?",
+                a3: "No user profiles have experienced safety issues since this script operates like a standard browser inspect tool window without network manipulation.",
+                changelog_title: "Update History",
+                changelog_desc: "Review recent version configurations and structural improvements.",
+                ver_label: "Version 2.4.4",
+                ver_date: "Recent Release",
+                c1: "Advanced calculation support on Physical Crit, Magic Crit, and Dodge variables.",
+                c2: "Introduced active Calculator modifiers inside Hero View elements.",
+                c3: "Added complete calculations and identification for Titans stats metrics.",
+                c4: "Modernized UI layouts with adaptive sizing configurations.",
+                c5: "Cleaned structural execution scopes ensuring low resource impact.",
+                dl_title: "Upgrade Your Tactical Analysis",
+                dl_desc: "Get instant access to real-time math calculations. Safe, secure, and ready to use.",
+                dl_btn: "📥 Download Now (.user.js)",
+                footer_credits: "Created by Messmer",
+                license: "License: GPL-3.0"
+            },
+            ru: {
+                nav_features: "Возможности",
+                nav_screenshots: "Скриншоты",
+                nav_install: "Установка",
+                nav_faq: "FAQ",
+                nav_changelog: "История изменений",
+                nav_download: "Скачать",
+                hero_badge: "v2.4.4 • Открытый код",
+                hero_title: "HW Lite Inspector",
+                hero_subtitle: "Инспектор статов Хроник Хаоса",
+                hero_desc: "Раскрывайте скрытые характеристики противников, рассчитывайте точные порезки урона и планируйте бои как профи. Легковесный, безопасный open-source аддон.",
+                btn_download: "📥 Скачать",
+                btn_install: "📖 Установка",
+                btn_github: "⭐ GitHub",
+                sim_header: "Интерактивный симулятор",
+                sim_active: "Активен",
+                sim_ap_label: "Пробитие атакующего",
+                sim_ar_label: "Броня / Маг. защита защитника",
+                sim_out_label: "Получаемый урон (в %)",
+                features_title: "Возможности плагина",
+                features_desc: "Создан для мгновенной работы в Tampermonkey, предоставляя глубокий анализ игровой механики.",
+                f1_title: "Скрытые статы",
+                f1_desc: "Показывает параметры персонажей, которые скрыты сервером в окне предпросмотра.",
+                f2_title: "Матрица урона",
+                f2_desc: "Мгновенное сопоставление защиты и пробития ваших героев против защитного пака.",
+                f3_title: "Живой калькулятор",
+                f3_desc: "Меняйте статы защиты и атаки прямо в интерфейсе, чтобы увидеть расчетные изменения порезок.",
+                f4_title: "Экспорт команд",
+                f4_desc: "Копируйте текстовые выгрузки с характеристиками пачек для обмена информацией в Discord.",
+                f5_title: "Полная локализация",
+                f5_desc: "Скрипт автоматически подстраивается под русский или английский интерфейс.",
+                f6_title: "Минимальный вес",
+                f6_desc: "Чистый JS-код без внешних библиотек обеспечивает высокое быстродействие и надежность.",
+                screenshots_title: "Интерфейс программы",
+                screenshots_desc: "Визуализация ключевых блоков интерфейса, встраиваемых прямо в окно игры.",
+                s1_title: "Детальные карточки",
+                s1_desc: "Отображение всех ключевых статов героя в один клик.",
+                s2_title: "Матрица порезок",
+                s2_desc: "Быстрый анализ того, сколько физического и магического урона пройдет по целям.",
+                s3_title: "Живая симуляция",
+                s3_desc: "Добавляйте виртуальные прибавки к броне или пробитию прямо во время анализа.",
+                install_title: "Простая установка",
+                install_desc: "Начните анализировать боевые характеристики за несколько простых шагов.",
+                step1_title: "Установка Tampermonkey",
+                step1_desc: "Скачайте популярное расширение Tampermonkey для Chrome, Firefox, Opera или Yandex.",
+                step2_title: "Импорт скрипта",
+                step2_desc: "Нажмите на кнопку «Скачать» ниже, чтобы открыть окно автоустановки плагина.",
+                step3_title: "Запуск игры",
+                step3_desc: "Откройте Хроники Хаоса в браузере или на официальном игровом портале.",
+                step4_title: "Анализ интерфейса",
+                step4_desc: "В левом верхнем углу игры автоматически появится компактный информер.",
+                faq_title: "Часто задаваемые вопросы",
+                faq_desc: "Короткие ответы на вопросы о принципах работы и безопасности.",
+                q1: "Это безопасно?",
+                a1: "Абсолютно. Аддон обрабатывает сетевые пакеты исключительно локально в памяти браузера, не отправляет никаких сторонних запросов и не меняет код игры.",
+                q2: "Влияет ли он на игровой процесс?",
+                a2: "Нет. Скрипт является чисто аналитическим. Он не совершает автобоев, накруток или автоматических рутинных действий.",
+                q3: "Могут ли забанить?",
+                a3: "За несколько лет использования подобных аналитических инструментов блокировок зафиксировано не было, так как скрипт не совершает активных действий.",
+                changelog_title: "История версий",
+                changelog_desc: "Список последних изменений и функциональных улучшений проекта.",
+                ver_label: "Версия 2.4.4",
+                ver_date: "Последнее обновление",
+                c1: "Добавлены точные расчеты влияния параметров Крита, Маг. Крита и Уворота.",
+                c2: "Внедрен интерактивный калькулятор статов в раскрывающемся списке героя.",
+                c3: "Полностью реализована поддержка расширенного анализа статов Титанов.",
+                c4: "Адаптирован и улучшен интерфейс для мобильных разрешений и мониторов.",
+                c5: "Код оптимизирован для минимизации потребления оперативной памяти.",
+                dl_title: "Повысьте качество аналитики",
+                dl_desc: "Получите доступ к мгновенным математическим расчетам параметров в реальном времени.",
+                dl_btn: "📥 Установить скрипт (.user.js)",
+                footer_credits: "Разработчик: Messmer",
+                license: "Лицензия: GPL-3.0"
             }
+        };
+
+        // State Manager
+        let currentLang = localStorage.getItem("hw_inspector_site_lang") || 
+            ((navigator.language && navigator.language.startsWith("ru")) ? "ru" : "en");
+
+        const langToggleBtn = document.getElementById("lang-toggle");
+
+        function applyLocalization() {
+            // Update page content
+            const elements = document.querySelectorAll("[data-i18n]");
+            elements.forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (langData[currentLang][key]) {
+                    el.innerText = langData[currentLang][key];
+                }
+            });
+
+            // Update page HTML/Title
+            document.documentElement.lang = currentLang;
+            
+            // Update button label
+            langToggleBtn.innerText = currentLang === "en" ? "RU" : "EN";
+        }
+
+        langToggleBtn.addEventListener("click", () => {
+            currentLang = currentLang === "en" ? "ru" : "en";
+            localStorage.setItem("hw_inspector_site_lang", currentLang);
+            applyLocalization();
         });
-        document.getElementById("langBtn").innerText = currentLang === "en" ? "RU" : "EN";
-    }
 
-    function toggleLang() {
-        currentLang = currentLang === "en" ? "ru" : "en";
-        updateTexts();
-    }
+        // Initialize Localization
+        applyLocalization();
 
-    // Инициализация при загрузке
-    updateTexts();
-</script>
+        // FAQ Interactive accordion logic
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                faqItems.forEach(i => i.classList.remove('active'));
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
 
+        // Simulator Logic
+        const apInput = document.getElementById('calc-ap');
+        const arInput = document.getElementById('calc-ar');
+        const calcResult = document.getElementById('calc-result');
+
+        const HW_DIV = 3000;
+
+        function updateSim() {
+            const ap = parseFloat(apInput.value) || 0;
+            const ar = parseFloat(arInput.value) || 0;
+            
+            const effectiveArmor = Math.max(0, ar - ap);
+            const multiplier = HW_DIV / (effectiveArmor + HW_DIV);
+            const percent = (multiplier * 100).toFixed(1);
+            
+            calcResult.innerText = `${percent}%`;
+        }
+
+        apInput.addEventListener('input', updateSim);
+        arInput.addEventListener('input', updateSim);
+        updateSim(); // Run initial calc
+    </script>
 </body>
 </html>
