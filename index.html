@@ -4,62 +4,202 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HW Lite Inspector</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg-color: #111111;
+            --panel-bg: #1a1a1a;
+            --text-main: #d1d1d1;
+            --gold: #ffd100;
+            --border: #4a4a4a;
+            --btn-hover: #333333;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px 20px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(to bottom, #2b2b2b, #111);
+            padding: 15px 20px;
+            border-bottom: 1px solid #000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .title {
+            color: var(--gold);
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px #000;
+            letter-spacing: 1px;
+        }
+        .lang-switch {
+            background: #222;
+            color: var(--gold);
+            border: 1px solid var(--border);
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .lang-switch:hover {
+            background: var(--btn-hover);
+        }
+        .content {
+            padding: 30px;
+            line-height: 1.6;
+        }
+        h2 {
+            color: #ffffff;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        ul li::before {
+            content: "•";
+            color: var(--gold);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        .install-btn {
+            display: inline-block;
+            margin-top: 20px;
+            background: #222;
+            color: #00ff66;
+            text-decoration: none;
+            padding: 12px 24px;
+            border: 1px solid #00ff66;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .install-btn:hover {
+            background: #00ff66;
+            color: #000;
+            box-shadow: 0 0 10px #00ff66;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="logo">⚔️ HW Inspector</div>
-        <button id="lang-toggle" class="lang-btn">EN / RU</button>
-    </header>
 
-    <main>
-        <section class="hero">
-            <h1 data-i18n="title">HW Lite Inspector</h1>
-            <p class="subtitle" data-i18n="subtitle">Advanced stats analysis mod for Hero Wars</p>
-            
-            <div class="actions">
-                <!-- Замените YOUR_GITHUB_USERNAME на ваш ник -->
-                <a href="https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/hw-lite-inspector/main/hw-lite-inspector.user.js" class="btn btn-primary" data-i18n="installBtn">Install Script</a>
-                <a href="https://github.com/YOUR_GITHUB_USERNAME/hw-lite-inspector" class="btn btn-secondary" data-i18n="sourceBtn">View Source</a>
-            </div>
-        </section>
+<div class="container">
+    <div class="header">
+        <div class="title" data-i18n="title">⚔️ HW Lite Inspector</div>
+        <button class="lang-switch" onclick="toggleLang()" id="langBtn">EN / RU</button>
+    </div>
+    <div class="content">
+        <h2 data-i18n="descTitle">About the script</h2>
+        <p data-i18n="descText">Deep stats analysis mod for Hero Wars. Reveals hidden values, calculates reductions via Damage Matrix, and allows stat adjustments.</p>
+        
+        <h2 data-i18n="featTitle">Features</h2>
+        <ul>
+            <li data-i18n="feat1">Reveals hidden stats of enemies.</li>
+            <li data-i18n="feat2">Damage Matrix: calculates physical and magical reductions between heroes.</li>
+            <li data-i18n="feat3">Calculator: allows manual stat adjustments to test outcomes.</li>
+            <li data-i18n="feat4">Parses Match History & Journal.</li>
+            <li data-i18n="feat5">Export battles in text format.</li>
+        </ul>
 
-        <section class="features">
-            <h2 data-i18n="featuresTitle">Features</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3 data-i18n="feat1Title">Deep Stats</h3>
-                    <p data-i18n="feat1Desc">Reveals hidden values and full hero attributes in Lobby and Battles.</p>
-                </div>
-                <div class="card">
-                    <h3 data-i18n="feat2Title">Damage Matrix</h3>
-                    <p data-i18n="feat2Desc">Calculates exact physical and magical damage reductions between heroes.</p>
-                </div>
-                <div class="card">
-                    <h3 data-i18n="feat3Title">Calculator</h3>
-                    <p data-i18n="feat3Desc">Adjust Armor, Magic Resist, and Penetration on the fly to see how it affects damage.</p>
-                </div>
-            </div>
-        </section>
+        <h2 data-i18n="instTitle">Installation</h2>
+        <p data-i18n="instStep1">1. Install a userscript manager like <b>Tampermonkey</b> for your browser.</p>
+        <p data-i18n="instStep2">2. Click the button below to install the script.</p>
+        
+        <a href="hw-lite-inspector.user.js" class="install-btn" data-i18n="instBtn">INSTALL SCRIPT v2.4.4</a>
+        
+        <div class="footer">
+            Developed by Messmer (discord: m3ssmer) | License: GPL-3.0-or-later
+        </div>
+    </div>
+</div>
 
-        <section class="installation">
-            <h2 data-i18n="installTitle">How to Install</h2>
-            <ol class="install-steps">
-                <li>
-                    <span data-i18n="step1">Install a userscript manager like</span> 
-                    <a href="https://www.tampermonkey.net/" target="_blank">Tampermonkey</a>.
-                </li>
-                <li data-i18n="step2">Click the "Install Script" button above.</li>
-                <li data-i18n="step3">Confirm the installation in the Tampermonkey tab.</li>
-                <li data-i18n="step4">Refresh your Hero Wars game page!</li>
-            </ol>
-        </section>
-    </main>
+<script>
+    const i18n = {
+        en: {
+            title: "⚔️ HW Lite Inspector",
+            descTitle: "About the script",
+            descText: "Deep stats analysis mod for Hero Wars. Reveals hidden values, calculates reductions via Damage Matrix, and allows stat adjustments.",
+            featTitle: "Features",
+            feat1: "Reveals hidden stats of enemies.",
+            feat2: "Damage Matrix: calculates physical and magical reductions between heroes.",
+            feat3: "Calculator: allows manual stat adjustments to test outcomes.",
+            feat4: "Parses Match History & Journal.",
+            feat5: "Export battles in text format.",
+            instTitle: "Installation",
+            instStep1: "1. Install a userscript manager like <b>Tampermonkey</b> for your browser.",
+            instStep2: "2. Click the button below to install the script.",
+            instBtn: "INSTALL SCRIPT v2.4.4"
+        },
+        ru: {
+            title: "⚔️ HW Инспектор статов",
+            descTitle: "О скрипте",
+            descText: "Мод для детального анализа статов в Хрониках Хаоса. Показывает скрытые значения, рассчитывает порезки (Матрица урона) и позволяет менять статы в калькуляторе.",
+            featTitle: "Функции",
+            feat1: "Отображает скрытые статы противников.",
+            feat2: "Матрица урона: расчет пробива и порезки физического и магического урона.",
+            feat3: "Калькулятор: ручное изменение статов для тестов.",
+            feat4: "Парсинг истории боев и журнала.",
+            feat5: "Экспорт пачек в текстовом формате.",
+            instTitle: "Установка",
+            instStep1: "1. Установите расширение <b>Tampermonkey</b> для вашего браузера.",
+            instStep2: "2. Нажмите на кнопку ниже, чтобы установить скрипт.",
+            instBtn: "УСТАНОВИТЬ СКРИПТ v2.4.4"
+        }
+    };
 
-    <footer>
-        <p>Created by Messmer | License: GPL-3.0-or-later</p>
-    </footer>
+    // Определение языка по локации/браузеру
+    let currentLang = (navigator.language || navigator.userLanguage).startsWith("ru") ? "ru" : "en";
 
-    <script src="script.js"></script>
+    function updateTexts() {
+        document.querySelectorAll("[data-i18n]").forEach(el => {
+            const key = el.getAttribute("data-i18n");
+            if (i18n[currentLang][key]) {
+                el.innerHTML = i18n[currentLang][key];
+            }
+        });
+        document.getElementById("langBtn").innerText = currentLang === "en" ? "RU" : "EN";
+    }
+
+    function toggleLang() {
+        currentLang = currentLang === "en" ? "ru" : "en";
+        updateTexts();
+    }
+
+    // Инициализация при загрузке
+    updateTexts();
+</script>
+
 </body>
 </html>
