@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HW Lite Inspector</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">⚔️ HW Inspector</div>
+        <button id="lang-toggle" class="lang-btn">EN / RU</button>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1 data-i18n="title">HW Lite Inspector</h1>
+            <p class="subtitle" data-i18n="subtitle">Advanced stats analysis mod for Hero Wars</p>
+            
+            <div class="actions">
+                <!-- Замените YOUR_GITHUB_USERNAME на ваш ник -->
+                <a href="https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/hw-lite-inspector/main/hw-lite-inspector.user.js" class="btn btn-primary" data-i18n="installBtn">Install Script</a>
+                <a href="https://github.com/YOUR_GITHUB_USERNAME/hw-lite-inspector" class="btn btn-secondary" data-i18n="sourceBtn">View Source</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2 data-i18n="featuresTitle">Features</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3 data-i18n="feat1Title">Deep Stats</h3>
+                    <p data-i18n="feat1Desc">Reveals hidden values and full hero attributes in Lobby and Battles.</p>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="feat2Title">Damage Matrix</h3>
+                    <p data-i18n="feat2Desc">Calculates exact physical and magical damage reductions between heroes.</p>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="feat3Title">Calculator</h3>
+                    <p data-i18n="feat3Desc">Adjust Armor, Magic Resist, and Penetration on the fly to see how it affects damage.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="installation">
+            <h2 data-i18n="installTitle">How to Install</h2>
+            <ol class="install-steps">
+                <li>
+                    <span data-i18n="step1">Install a userscript manager like</span> 
+                    <a href="https://www.tampermonkey.net/" target="_blank">Tampermonkey</a>.
+                </li>
+                <li data-i18n="step2">Click the "Install Script" button above.</li>
+                <li data-i18n="step3">Confirm the installation in the Tampermonkey tab.</li>
+                <li data-i18n="step4">Refresh your Hero Wars game page!</li>
+            </ol>
+        </section>
+    </main>
+
+    <footer>
+        <p>Created by Messmer | License: GPL-3.0-or-later</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
