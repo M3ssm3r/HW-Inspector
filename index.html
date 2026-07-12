@@ -6,7 +6,7 @@
     <title>HW Lite Inspector — Advanced Hero Wars Stats Addon</title>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Open-source browser addon for Hero Wars. Reveal hidden stats, analyze damage matrices, and simulate stat modifications in real time.">
+    <meta name="description" content="Browser addon for Hero Wars. Reveal hidden stats, analyze damage matrices, and simulate stat modifications in real time.">
     <meta name="keywords" content="Hero Wars, Хроники Хаоса, Tampermonkey, Hero Wars script, HW Inspector, Damage Matrix">
     <meta name="author" content="Messmer">
     
@@ -22,7 +22,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* CSS variables based on Hero Wars palette */
         :root {
             --bg-darker: #07080a;
             --bg-dark: #0f1115;
@@ -60,7 +59,6 @@
             overflow-x: hidden;
         }
 
-        /* Container helper */
         .container {
             width: 100%;
             max-width: 1200px;
@@ -68,7 +66,6 @@
             padding: 0 20px;
         }
 
-        /* Typography */
         h1, h2, h3, h4 {
             font-family: 'Cinzel', serif;
             letter-spacing: 0.5px;
@@ -79,7 +76,6 @@
             text-decoration: none;
         }
 
-        /* Glow effects */
         .gold-glow {
             animation: goldPulse 4s infinite alternate;
         }
@@ -89,7 +85,6 @@
             100% { box-shadow: 0 0 25px rgba(255, 209, 0, 0.3); }
         }
 
-        /* Header & Navigation */
         header {
             position: sticky;
             top: 0;
@@ -98,7 +93,6 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: background var(--transition-speed);
         }
 
         .header-wrap {
@@ -244,7 +238,7 @@
             transform: translateY(-2px);
         }
 
-        /* Mockup / Live Preview Container */
+        /* Mockup / Live Preview */
         .mockup-container {
             background: var(--bg-glass);
             border: 1px solid var(--border-glass);
@@ -256,7 +250,6 @@
             backdrop-filter: blur(8px);
         }
 
-        /* Live Calc Demonstration in Hero Section */
         .live-preview-header {
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 12px;
@@ -314,11 +307,6 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
             outline: none;
-            transition: border-color var(--transition-speed);
-        }
-
-        .sim-input:focus {
-            border-color: var(--gold-primary);
         }
 
         .sim-output-box {
@@ -429,7 +417,6 @@
             border-color: var(--border-glass);
         }
 
-        /* Pure CSS Stylized Mock representation of real script interface */
         .window-mock {
             background: #111;
             padding: 15px;
@@ -643,7 +630,7 @@
             font-weight: bold;
         }
 
-        /* Download Section CTA */
+        /* Download Section CTA (Two-Step Flow) */
         .download-cta {
             padding: 120px 0;
             text-align: center;
@@ -684,9 +671,16 @@
             font-size: 1.1rem;
         }
 
+        .cta-buttons-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
         .btn-large {
-            padding: 16px 45px;
-            font-size: 1.1rem;
+            padding: 16px 35px;
+            font-size: 1rem;
             border-radius: 8px;
         }
 
@@ -730,7 +724,6 @@
             font-size: 0.8rem;
         }
 
-        /* Responsive Design */
         @media (max-width: 968px) {
             .hero {
                 grid-template-columns: 1fr;
@@ -758,7 +751,7 @@
 
         @media (max-width: 768px) {
             nav {
-                display: none; /* Can be expanded into a mobile menu if required */
+                display: none;
             }
 
             .header-wrap {
@@ -772,6 +765,8 @@
 
             .footer-links {
                 justify-content: center;
+                flex-direction: column;
+                gap: 12px;
             }
         }
     </style>
@@ -800,18 +795,17 @@
     <!-- Hero Section -->
     <section class="container hero">
         <div>
-            <span class="badge" data-i18n="hero_badge">v2.4.4 • Open Source</span>
+            <span class="badge" data-i18n="hero_badge">v2.4.4 • GPL-3.0</span>
             <h1 data-i18n="hero_title">HW Lite Inspector</h1>
             <h2 data-i18n="hero_subtitle">Advanced Hero Wars Stats Inspector</h2>
             <p data-i18n="hero_desc">Unveil hidden opponent stats, calculate precise damage reductions, and plan your battles like a pro. A passive, safe, lightweight addon for browser editions of Hero Wars.</p>
             <div class="btn-group">
-                <a href="#download" class="btn btn-primary" data-i18n="btn_download">📥 Download</a>
+                <a href="#download" class="btn btn-primary" data-i18n="btn_download">📥 Get Started</a>
                 <a href="#install" class="btn btn-secondary" data-i18n="btn_install">📖 Installation</a>
-                <a href="https://github.com" target="_blank" class="btn btn-secondary" data-i18n="btn_github">⭐ GitHub</a>
             </div>
         </div>
         
-        <!-- Live calc demo representing tool capabilities -->
+        <!-- Live Calc Demo -->
         <div class="mockup-container gold-glow">
             <div class="live-preview-header">
                 <span class="preview-title" data-i18n="sim_header">Interactive Simulator</span>
@@ -879,7 +873,7 @@
         </div>
     </section>
 
-    <!-- Visual Mockups / Screenshots Section -->
+    <!-- Visual Mockups -->
     <section class="screenshots" id="screenshots">
         <div class="container">
             <div class="section-header">
@@ -888,7 +882,6 @@
             </div>
 
             <div class="gallery-grid">
-                <!-- Mockup Card 1 -->
                 <div class="gallery-card">
                     <div class="window-mock">
                         <div class="mock-header">
@@ -909,7 +902,6 @@
                     </div>
                 </div>
 
-                <!-- Mockup Card 2 -->
                 <div class="gallery-card">
                     <div class="window-mock">
                         <div class="mock-header">
@@ -931,7 +923,6 @@
                     </div>
                 </div>
 
-                <!-- Mockup Card 3 -->
                 <div class="gallery-card">
                     <div class="window-mock">
                         <div class="mock-header">
@@ -956,7 +947,7 @@
         </div>
     </section>
 
-    <!-- Installation Steps Section -->
+    <!-- Installation Steps -->
     <section class="install" id="install">
         <div class="container">
             <div class="section-header">
@@ -973,7 +964,7 @@
                 <div class="step-card">
                     <div class="step-num">II</div>
                     <h3 data-i18n="step2_title">Import Script</h3>
-                    <p data-i18n="step2_desc">Click Download below to let Tampermonkey handle the automated script installation.</p>
+                    <p data-i18n="step2_desc">Click the install link to let Tampermonkey handle the automated script installation.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-num">III</div>
@@ -1031,7 +1022,7 @@
         </div>
     </section>
 
-    <!-- Changelog Section -->
+    <!-- Changelog -->
     <section class="changelog" id="changelog">
         <div class="container">
             <div class="section-header">
@@ -1055,14 +1046,16 @@
         </div>
     </section>
 
-    <!-- Download Section -->
+    <!-- Download Section (Step-by-step download flow) -->
     <section class="download-cta" id="download">
         <div class="container">
             <div class="cta-box gold-glow">
                 <h2 data-i18n="dl_title">Upgrade Your Tactical Analysis</h2>
-                <p data-i18n="dl_desc">Get instant access to real-time math calculations. Safe, secure, and ready to use.</p>
-                <!-- REPLACE # WITH THE DIRECT URL TO YOUR .user.js FILE FOR 1-CLICK INSTALLATION -->
-                <a href="hw-lite-inspector.user.js" class="btn btn-primary btn-large" data-i18n="dl_btn">📥 Download Now (.user.js)</a>
+                <p data-i18n="dl_desc">Install the prerequisite extension, then initialize the analytical helper script.</p>
+                <div class="cta-buttons-wrap">
+                    <a href="https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo?hl=en" target="_blank" class="btn btn-secondary btn-large" data-i18n="dl_step1">1. Get Tampermonkey</a>
+                    <a href="hw-lite-inspector.user.js" class="btn btn-primary btn-large" data-i18n="dl_step2">2. Install UserScript</a>
+                </div>
             </div>
         </div>
     </section>
@@ -1076,9 +1069,8 @@
                     <p data-i18n="footer_credits">Created by Messmer</p>
                 </div>
                 <div class="footer-links">
-                    <a href="https://discord.com" target="_blank">💬 Discord: m3ssmer</a>
-                    <a href="https://github.com" target="_blank">💻 GitHub Project</a>
-                    <a href="#" data-i18n="license">License: GPL-3.0</a>
+                    <a href="https://discordapp.com/users/1046400287042179092" target="_blank">💬 Discord Profile</a>
+                    <a href="https://opensource.org/license/gpl-3.0" target="_blank" data-i18n="license">License: GPL-3.0</a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -1089,7 +1081,6 @@
 
     <!-- JavaScript logic (Localization & Calculator) -->
     <script>
-        // Localization Dictionary
         const langData = {
             en: {
                 nav_features: "Features",
@@ -1098,13 +1089,12 @@
                 nav_faq: "FAQ",
                 nav_changelog: "Changelog",
                 nav_download: "Download",
-                hero_badge: "v2.4.4 • Open Source",
+                hero_badge: "v2.4.4 • GPL-3.0",
                 hero_title: "HW Lite Inspector",
                 hero_subtitle: "Advanced Hero Wars Stats Inspector",
                 hero_desc: "Unveil hidden opponent stats, calculate precise damage reductions, and plan your battles like a pro. A passive, safe, lightweight addon for browser editions of Hero Wars.",
-                btn_download: "📥 Download",
+                btn_download: "📥 Get Started",
                 btn_install: "📖 Installation",
-                btn_github: "⭐ GitHub",
                 sim_header: "Interactive Simulator",
                 sim_active: "Interactive",
                 sim_ap_label: "Attacker Penetration",
@@ -1137,7 +1127,7 @@
                 step1_title: "Install Tampermonkey",
                 step1_desc: "Download the standard Tampermonkey extension for Chrome, Firefox, or Edge.",
                 step2_title: "Import Script",
-                step2_desc: "Click Download below to let Tampermonkey handle the automated script installation.",
+                step2_desc: "Click the install link to let Tampermonkey handle the automated script installation.",
                 step3_title: "Run Hero Wars",
                 step3_desc: "Open Web, Alliance, or Nexters page link inside your active browser.",
                 step4_title: "Access Overlay",
@@ -1160,8 +1150,9 @@
                 c4: "Modernized UI layouts with adaptive sizing configurations.",
                 c5: "Cleaned structural execution scopes ensuring low resource impact.",
                 dl_title: "Upgrade Your Tactical Analysis",
-                dl_desc: "Get instant access to real-time math calculations. Safe, secure, and ready to use.",
-                dl_btn: "📥 Download Now (.user.js)",
+                dl_desc: "Install the prerequisite extension, then initialize the analytical helper script.",
+                dl_step1: "1. Get Tampermonkey",
+                dl_step2: "2. Install UserScript",
                 footer_credits: "Created by Messmer",
                 license: "License: GPL-3.0"
             },
@@ -1172,13 +1163,12 @@
                 nav_faq: "FAQ",
                 nav_changelog: "История изменений",
                 nav_download: "Скачать",
-                hero_badge: "v2.4.4 • Открытый код",
+                hero_badge: "v2.4.4 • GPL-3.0",
                 hero_title: "HW Lite Inspector",
                 hero_subtitle: "Инспектор статов Хроник Хаоса",
                 hero_desc: "Раскрывайте скрытые характеристики противников, рассчитывайте точные порезки урона и планируйте бои как профи. Легковесный, безопасный open-source аддон.",
-                btn_download: "📥 Скачать",
+                btn_download: "📥 Начать",
                 btn_install: "📖 Установка",
-                btn_github: "⭐ GitHub",
                 sim_header: "Интерактивный симулятор",
                 sim_active: "Активен",
                 sim_ap_label: "Пробитие атакующего",
@@ -1211,7 +1201,7 @@
                 step1_title: "Установка Tampermonkey",
                 step1_desc: "Скачайте популярное расширение Tampermonkey для Chrome, Firefox, Opera или Yandex.",
                 step2_title: "Импорт скрипта",
-                step2_desc: "Нажмите на кнопку «Скачать» ниже, чтобы открыть окно автоустановки плагина.",
+                step2_desc: "Нажмите на ссылку для автоматической установки и интеграции скрипта в расширение.",
                 step3_title: "Запуск игры",
                 step3_desc: "Откройте Хроники Хаоса в браузере или на официальном игровом портале.",
                 step4_title: "Анализ интерфейса",
@@ -1234,21 +1224,20 @@
                 c4: "Адаптирован и улучшен интерфейс для мобильных разрешений и мониторов.",
                 c5: "Код оптимизирован для минимизации потребления оперативной памяти.",
                 dl_title: "Повысьте качество аналитики",
-                dl_desc: "Получите доступ к мгновенным математическим расчетам параметров в реальном времени.",
-                dl_btn: "📥 Установить скрипт (.user.js)",
+                dl_desc: "Сначала установите расширение Tampermonkey, затем импортируйте аналитический скрипт.",
+                dl_step1: "1. Установить Tampermonkey",
+                dl_step2: "2. Установить скрипт",
                 footer_credits: "Разработчик: Messmer",
                 license: "Лицензия: GPL-3.0"
             }
         };
 
-        // State Manager
         let currentLang = localStorage.getItem("hw_inspector_site_lang") || 
             ((navigator.language && navigator.language.startsWith("ru")) ? "ru" : "en");
 
         const langToggleBtn = document.getElementById("lang-toggle");
 
         function applyLocalization() {
-            // Update page content
             const elements = document.querySelectorAll("[data-i18n]");
             elements.forEach(el => {
                 const key = el.getAttribute("data-i18n");
@@ -1257,10 +1246,7 @@
                 }
             });
 
-            // Update page HTML/Title
             document.documentElement.lang = currentLang;
-            
-            // Update button label
             langToggleBtn.innerText = currentLang === "en" ? "RU" : "EN";
         }
 
@@ -1270,10 +1256,8 @@
             applyLocalization();
         });
 
-        // Initialize Localization
         applyLocalization();
 
-        // FAQ Interactive accordion logic
         const faqItems = document.querySelectorAll('.faq-item');
         faqItems.forEach(item => {
             const question = item.querySelector('.faq-question');
@@ -1286,7 +1270,6 @@
             });
         });
 
-        // Simulator Logic
         const apInput = document.getElementById('calc-ap');
         const arInput = document.getElementById('calc-ar');
         const calcResult = document.getElementById('calc-result');
@@ -1306,7 +1289,7 @@
 
         apInput.addEventListener('input', updateSim);
         arInput.addEventListener('input', updateSim);
-        updateSim(); // Run initial calc
+        updateSim();
     </script>
 </body>
 </html>
