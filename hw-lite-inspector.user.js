@@ -218,17 +218,19 @@
         11: "Chabba", 12: "Arachne", 13: "Orion", 14: "Fox", 15: "Ginger", 16: "Dante", 17: "Mojo", 18: "Judge", 19: "Dark Star", 20: "Artemis",
         21: "Markus", 22: "Peppy", 23: "Lian", 24: "Cleaver", 25: "Ishmael", 26: "Lilith", 27: "Luther", 28: "Qing Mao", 29: "Dorian", 30: "Cornelius",
         31: "Jet", 32: "Helios", 33: "Lars", 34: "Krista", 35: "Jorgen", 36: "Maya", 37: "Jhu", 38: "Elmir", 39: "Ziri", 40: "Nebula",
-        41: "K'arkh", 42: "Rufus", 43: "Celeste", 44: "Astrid", 45: "Satori", 46: "Martha", 47: "Andvari", 49: "Yasmine", 50: "Isaac", 51: "Xe'Sha/Morrigan",
+        41: "K'arkh", 42: "Rufus", 43: "Celeste", 44: "Astrid", 45: "Satori", 46: "Martha", 47: "Andvari", 49: "Yasmine", 50: "Isaac", 51: "Xe'Sha",
         52: "Amira", 53: "Fafnir", 54: "Iris", 55: "Mushy", 56: "Julius", 57: "Kayla", 58: "Aidan", 59: "Cascade", 60: "Octavia", 61: "Oya",
         62: "Soleil", 63: "Lara Croft", 64: "Folio", 65: "Tempus", 66: "Turtles", 67: "Polaris", 68: "Peech", 69: "Guus", 70: "Somna",
         71: "Electra", 72: "Byrna", 73: "Drayne", 74: "Miu", 75: "Kendle", 76: "Crow", 79: "Leonel",
         500: "Sebastian", 501: "Corvus", 502: "Morrigan", 503: "Alvanor", 504: "Tristan",
-        4000: "Sigurd", 4001: "Nova", 4002: "Mairi", 4003: "Hyperion",
-        4004: "Vex", 4014: "Kelman", 4024: "Verdoc",
-        4010: "Moloch", 4011: "Vulcan", 4012: "Ignis", 4013: "Araji",
-        4020: "Angus", 4021: "Sylva", 4022: "Avalon", 4023: "Eden",
-        4030: "Brustar", 4031: "Keros", 4032: "Mort", 4033: "Tenebris",
-        4040: "Rigel", 4041: "Amon", 4042: "Iyari", 4043: "Solaris", 99999: "??? (Hidden Team)"
+        4000: "Sigurd", 4001: "Nova", 4002: "Mairi", 4003: "Hyperion",4004: "Tydus",
+        4010: "Moloch", 4011: "Vulcan", 4012: "Ignis", 4013: "Araji",4014: "Asherona",
+        4020: "Angus", 4021: "Sylva", 4022: "Avalon", 4023: "Eden",4024: "Verdoc",
+        4030: "Brustar", 4031: "Keros", 4032: "Mort", 4033: "Tenebris", 4034: "Umbra",
+        4040: "Rigel", 4041: "Amon", 4042: "Iyari", 4043: "Solaris", 4044: "Lumira", 
+        4051: "Alecto", 4052: "Orm",
+        99999: "??? (Hidden Team)"
+    
     };
 
     const PALETTE = ["#ff4d4d", "#4da6ff", "#00ff66", "#ffd100", "#a335ee", "#00ffff", "#ff00ff", "#aFa", "#fAa"];
