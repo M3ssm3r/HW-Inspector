@@ -2,8 +2,8 @@
 // @name         HW Lite Inspector
 // @name:ru      HW Инспектор статов
 // @namespace    http://tampermonkey.net/
-// @version      2.4.4
-// @description  Hero Wars stats inspecto
+// @version      2.4.5
+// @description  Hero Wars stats inspector
 // @description-ru Хроники Хаоса Инспектор Статов
 // @author       Messmer discord: m3ssmer
 // @match        *://*.hero-wars-alliance.com/*
@@ -29,7 +29,6 @@
 
     const HW_DIV = 3000;
 
-    // Внедряем чистый CSS через Constructable Stylesheets (Полный обход CSP)
     const HW_EXT_CSS = `
         #hw-lite-inspector {
             position: fixed; top: 15px; left: 15px; z-index: 999999;
